@@ -1,6 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+Modified on Thu Jul 27 10:56:36 2017
+
+@author: aritad.choicharoon
+"""
+
 from urllib.request import urlopen
 from xml.dom import minidom
 import time
+import pandas as pd
+
 
 def count_endo(nation):
     Nation_Name = nation
@@ -16,7 +25,7 @@ def count_endo(nation):
                     i = i+1 
             return (i)
         else:
-            return 0
+            return (0)
 
 
 def whatisendo(nation):
@@ -52,11 +61,10 @@ def regionscan(region):
     website2 = urlopen("http://www.nationstates.net/cgi-bin/api.cgi?region="+region+"&q=nations+numnations+delegate")
     data = minidom.parseString(website2.read())
     numb = data.getElementsByTagName('NUMNATIONS')
-    answer = []
+    answer = pd.DataFrame()
     for i in numb:
         numc = (i.firstChild.nodeValue)
         print ("Total Number of Nations: "+numc)
-    names = data.getElementsByTagName('NUMNATIONS')
     nati = data.getElementsByTagName('NATIONS')
     for i in nati:
         natio = (i.firstChild.nodeValue)
@@ -73,9 +81,15 @@ def regionscan(region):
             elif n != ":":
                 string = string + n
             i = i+1
+        count = 0
     for i in empty:
-        answer.append(whatisendo(i))
+        a_dict = whatisendo(i)
+        count = count+1
+        print (count)
+        new_df = pd.DataFrame(a_dict,index=(a_dict['Name'],a_dict['Name'],a_dict['Name'])).iloc[[0]]
+        answer = answer.append(new_df)
     return answer
+
 
 def NS_Scan(regionname):
     liss = regionscan(regionname)
@@ -96,12 +110,3 @@ def NS_Scan(regionname):
             i = i+1
         print ('Name: '+a['Name']+"| WA Status: "+a['WA_status']+"| Endorsements: "+str(a['Endo']))
         liss.pop(n)
-    
-    
-    
-
-        
-
-
-
-
